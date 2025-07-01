@@ -4,8 +4,4 @@ resources:
   - ../../infrastructure/cert-manager
   - ../../infrastructure/ingress-nginx
   - ../../infrastructure/monitoring
-  - ../../infrastructure/bitwarden
-  - ../../infrastructure/sonarr
   - ../../infrastructure/cert-manager
-  - ../../infrastructure/ingress-nginx
-  - ../../infrastructure/monitoring
