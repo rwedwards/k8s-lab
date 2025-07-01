@@ -4,4 +4,3 @@ resources:
   - ../../infrastructure/cert-manager
   - ../../infrastructure/ingress-nginx
   - ../../infrastructure/monitoring
-  - ../../infrastructure/cert-manager
