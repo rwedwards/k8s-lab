@@ -1,0 +1,11 @@
+# infrastructure/helm/bjw-s-repo.yaml
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: bjw-s
+  namespace: flux-system
+spec:
+  interval: 1m
+  url: https://charts.bjw-s.dev
+  timeout: 60s
+
