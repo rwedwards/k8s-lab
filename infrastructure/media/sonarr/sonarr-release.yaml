@@ -1,0 +1,43 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sonarr
+  namespace: media
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: sonarr
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      version: '*'
+  values:
+    image:
+      repository: ghcr.io/onedr0p/sonarr
+      tag: "4.0.14.2938"
+    env:
+      TZ: America/New_York
+    persistence:
+      config:
+        enabled: true
+        mountPath: /config
+        type: pvc
+        size: 1Gi
+        storageClass: nfs-client
+    ingress:
+      main:
+        enabled: true
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-prod
+          nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+        hosts:
+          - host: sonarr.sleepy-puppy.com
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - sonarr.sleepy-puppy.com
+            secretName: sonarr-tls

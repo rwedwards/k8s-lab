@@ -5,4 +5,4 @@ resources:
   - ../../infrastructure/ingress-nginx
   - ../../infrastructure/monitoring
   - ../../infrastructure/helm
-  - ../../infrastructure/sonarr  
+  - ../../infrastructure/media/sonarr  
