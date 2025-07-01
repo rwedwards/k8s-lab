@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sonarr-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ""   #Or "nfs-client" or whatever you use
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarr
+  namespace: media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarr
+  template:
+    metadata:
+      labels:
+        app: sonarr
+    spec:
+      containers:
+        - name: sonarr
+          image: ghcr.io/onedr0p/sonarr:4.0.4.1491
+          ports:
+            - containerPort: 8989
+              name: http
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: sonarr-config
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonarr
+  namespace: media
+spec:
+  type: ClusterIP
+  selector:
+    app: sonarr
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+
+---
+
+ #Optional Ingress - uncomment if using ingress-nginx and TLS
+ apiVersion: networking.k8s.io/v1
+ kind: Ingress
+ metadata:
+   name: sonarr
+   namespace: media
+   annotations:
+     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+ spec:
+   ingressClassName: nginx
+   rules:
+     - host: sonarr.sleepy-puppy.com
+       http:
+         paths:
+           - path: /
+             pathType: Prefix
+             backend:
+               service:
+                 name: sonarr
+                 port:
+                   number: 80
+   tls:
+     - hosts:
+         - sonarr.sleepy-puppy.com
+       secretName: sonarr-tls
+
